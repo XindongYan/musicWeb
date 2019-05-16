@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'dva';
 import { Layout, Menu, Card, Avatar, Button, Modal, Icon, Dropdown, Upload, Input, message } from 'antd';
+import { routerRedux } from 'dva/router';
 import Like from '../components/like';
 import Commit from '../components/commit';
 import Index from '../components/index'
-import { uploadFile } from '../services/example';
+import { uploadFile, signOut } from '../services/example';
 
 // Footer作为播放器
 const { Header, Footer } = Layout;
@@ -36,7 +37,13 @@ export default class IndexPage extends React.PureComponent {
 
   componentDidMount() {
     this.props.dispatch({
-      type: 'example/fetchMusicList'
+      type: 'example/fetchMusicList',
+      callback: (res) => {
+        // console.log(res)
+        if (res.data.code === 401) {
+          this.props.dispatch(routerRedux.push('/login'));
+        }
+      }
     });
   }
 
@@ -62,7 +69,7 @@ export default class IndexPage extends React.PureComponent {
   }
 
   itemChange(e) {
-    if (e.key !== "User") {
+    if (e.key === "List" || e.key === "Like" || e.key === "Commit") {
       this.setState({
         item: e.key
       });
@@ -88,6 +95,7 @@ export default class IndexPage extends React.PureComponent {
 
   handleSubmit = async () => {
     const { author, name, _id } = this.state;
+    console.log(_id)
 
     const uploadResult = await uploadFile({ author, name, _id });
     // console.log(uploadResult);
@@ -103,10 +111,19 @@ export default class IndexPage extends React.PureComponent {
     }
   }
 
-  play = (item) => {
-    // this.setState({
-    //   play: item.score
-    // })
+  signOut = async () => {
+    let result = await signOut();
+    console.log(result);
+    if (result.data.code === 200) {
+      this.props.dispatch(routerRedux.push('/login'));
+    }
+  }
+
+  searchMusic = (name) => {
+    this.props.dispatch({
+      type: 'example/searchMusic',
+      payload: { name }
+    });
   }
 
   render() {
@@ -126,7 +143,7 @@ export default class IndexPage extends React.PureComponent {
           <Button onClick={e => this.uploadShow()}>上传你的音乐</Button>
         </Menu.Item>
         <Menu.Divider />
-        <Menu.Item key="signOut">退出登陆</Menu.Item>
+        <Menu.Item onClick={e => this.signOut()} key="signOut">退出登陆</Menu.Item>
       </Menu>
     );
 
@@ -149,12 +166,12 @@ export default class IndexPage extends React.PureComponent {
             <Menu.Item key="Search">
               <Search
                 placeholder="查找歌曲"
-                onSearch={value => console.log(value)}
+                onSearch={value => this.searchMusic(value)}
                 style={{ width: 200 }} />
             </Menu.Item>
             <Menu.Item key="User" style={{ float: 'right' }}>
               <Dropdown overlay={menu} trigger={['click']}>
-                <Avatar src={sessionStorage.getItem('avatar')} />
+                <Avatar src={localStorage.getItem('avatar')} />
               </Dropdown>
             </Menu.Item>
           </Menu>
@@ -167,10 +184,10 @@ export default class IndexPage extends React.PureComponent {
 
         <Footer style={{ bottom: "0px", background: "#fff", padding: "0px 140px" }}>
           <Card hoverable={true} style={{ borderRadius: 12, padding: "0px 30px" }}>
-            {!play ? '没有选择的歌曲' : <audio src={play} autoplay="autoplay" controls="controls"></audio>}
+            {!play ? '没有选择的歌曲' : <audio style={{ float: 'left' }} src={play} autoplay="autoplay" controls="controls"></audio>}
             {/* <Icon type="pause" /> */}
-            {!play ? '' : <span style={{ marginLeft: 200, fontWeight: 'bold' }}>{currentPlayName}</span>}
-            <Icon type="heart" style={{ fontSize: 25, float: 'right' }} />
+            {!play ? '' : <div style={{ float: 'right' }}><span style={{ marginLeft: 200, fontWeight: 'bold',  }}></span><p>正在播放：<span style={{ fontWeight: 'bold' }}>{currentPlayName}</span></p></div>}
+            {/* {!play ? '' : item.likes.indexOf(localStorage.getItem('id')) !== -1 ? <Icon type="heart" theme="twoTone" style={{ fontSize: 25, float: 'right' }} /> : <Icon type="heart" theme="twoTone" twoToneColor="#eb2f96" style={{ fontSize: 25, float: 'right' }} /> } */}
           </Card>
         </Footer>
 
@@ -193,6 +210,7 @@ export default class IndexPage extends React.PureComponent {
             action='http://127.0.0.1:3000/api/uploadMusic'
             listType='picture'
             name='music'
+            withCredentials={true}
             onChange={this.handleChange}
           >
             <Button>

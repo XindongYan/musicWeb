@@ -1,4 +1,4 @@
-import { musicList } from '../services/example'
+import { musicList, searchMusic } from '../services/example'
 
 export default {
 
@@ -20,14 +20,15 @@ export default {
     *fetch({ payload }, { call, put }) {  // eslint-disable-line
       yield put({ type: 'save' });
     },
-    *fetchMusicList({ payload }, { call, put }) {
+    *fetchMusicList({ payload, callback }, { call, put }) {
       let response;
       if (payload) {
         response = yield call(musicList, payload);
       } else {
         response = yield call(musicList);
       }
-      yield put({ type: 'musicList', action: response })
+      yield put({ type: 'musicList', action: response });
+      if (callback) callback(response)
     },
     *fetchCurrentUser({ payload }, { call, put }) {
       console.log(payload)
@@ -35,6 +36,10 @@ export default {
     },
     *play({ payload }, { call, put }) {
       yield put({ type: 'play1', action: payload })
+    },
+    *searchMusic({ payload }, { call, put }) {
+      const response = yield call(searchMusic, payload);
+      yield put({ type: 'searchMusic1', action: response });
     }
   },
 
@@ -60,6 +65,12 @@ export default {
         ...state,
         play: 'http://127.0.0.1:3000' + action.action.source,
         currentPlayName: action.action.currentPlayName
+      }
+    },
+    searchMusic1(state, action) {
+      return {
+        ...state,
+        musicList: action.action.data.music
       }
     }
   },

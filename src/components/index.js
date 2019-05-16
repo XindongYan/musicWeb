@@ -6,7 +6,9 @@ import { addCommit, likeMusic } from '../services/example'
 
 const { Content } = Layout;
 
-@connect(state => ({}))
+@connect(state => ({
+  musicList: state.example.musicList,
+}))
 
 export default class Index extends React.PureComponent {
 
@@ -18,7 +20,7 @@ export default class Index extends React.PureComponent {
   }
 
   componentDidMount() {
-    console.log(sessionStorage.getItem('id'));
+    console.log(localStorage.getItem('id'));
     this.props.dispatch({
       type: 'example/fetchMusicList'
     });
@@ -40,7 +42,7 @@ export default class Index extends React.PureComponent {
       }
 
       console.log('Received values of form: ', values);
-      addCommit(Object.assign(values, {id: sessionStorage.getItem('id'), name: this.state.name})).then(res => console.log(res))
+      addCommit(Object.assign(values, {id: localStorage.getItem('id'), name: this.state.name})).then(res => console.log(res))
       form.resetFields();
       this.setState({ visible: false });
     });
@@ -78,8 +80,8 @@ export default class Index extends React.PureComponent {
 
   render() {
 
-    const { data } = this.props;
-    console.log(data);
+    const { data, musicList } = this.props;
+    console.log(musicList);
     const { like, theme, heart } = this.state;
 
     return (
@@ -89,7 +91,7 @@ export default class Index extends React.PureComponent {
             itemLayout="horizontal"
             dataSource={data}
             renderItem={item => (
-              <List.Item actions={[<a onClick={e => this.play(item)}>播放</a>, <a>下一首播放</a>, <Icon onClick={e => this.like(item)} type="heart" theme={(item.likes.indexOf(sessionStorage.getItem('id')) !== -1 || like) ? 'twoTone' : theme} twoToneColor={heart} />]}>
+              <List.Item actions={[<a onClick={e => this.play(item)}>播放</a>, <Icon onClick={e => this.like(item)} type="heart" theme={(item.likes.indexOf(localStorage.getItem('id')) !== -1 || like) ? 'twoTone' : theme} twoToneColor={heart} />]}>
                 <Skeleton avatar title={false} loading={item.loading} active>
                   <List.Item.Meta
                     avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}

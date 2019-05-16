@@ -28,8 +28,9 @@ export default class Login extends React.PureComponent {
         // console.log('Received values of form: ', values);
         let result = await login(values);
         if (result && result.data && result.data.code === 200) {
-          sessionStorage.setItem('avatar', result.data.user.avatar);
-          sessionStorage.setItem('id', result.data.user.id);
+          console.log(result.data.user)
+          localStorage.setItem('avatar', result.data.user.avatar);
+          localStorage.setItem('id', result.data.user.id);
           message.success(result.data.msg);
           this.props.dispatch({
             type: 'example/fetchCurrentUser',

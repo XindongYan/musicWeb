@@ -66,10 +66,10 @@ export default class Like extends React.PureComponent {
   }
 
   componentDidMount() {
-    console.log(sessionStorage.getItem('id'));
+    console.log(localStorage.getItem('id'));
     this.props.dispatch({
       type: 'example/fetchMusicList',
-      payload: { id: sessionStorage.getItem('id') }
+      payload: { id: localStorage.getItem('id') }
     });
   }
 
@@ -79,7 +79,7 @@ export default class Like extends React.PureComponent {
         message.success(res.data.msg);
         this.props.dispatch({
           type: 'example/fetchMusicList',
-          payload: { id: sessionStorage.getItem('id') }
+          payload: { id: localStorage.getItem('id') }
         });
       } else {
         message.warn(res.data.msg)
@@ -103,7 +103,7 @@ export default class Like extends React.PureComponent {
       }
 
       console.log('Received values of form: ', values);
-      addCommit(Object.assign(values, {id: sessionStorage.getItem('id'), name: this.state.name})).then(res => {
+      addCommit(Object.assign(values, {id: localStorage.getItem('id'), name: this.state.name})).then(res => {
         if (res.data.code === 200) {
           message.success(res.data.msg)
         } else {
@@ -139,7 +139,7 @@ export default class Like extends React.PureComponent {
                 />
                 <div>
                   <Button style={{ border: '1px solid #fff' }} onClick={e => this.showModal(item.name)}><Icon type="edit" theme="twoTone" twoToneColor="#666" />编写点评</Button>
-                  <Button style={{ marginLeft: 40 }} size={"small"} onClick={e => this.clear(item._id, item.score)}><Icon type="heart" theme="twoTone" twoToneColor="#eb2f96" />取消喜欢</Button>
+                  <Button style={{ marginLeft: 40 }} size={"small"} onClick={e => this.clear(item._id, item.source)}><Icon type="heart" theme="twoTone" twoToneColor="#eb2f96" />取消喜欢</Button>
                 </div>
               </Skeleton>
             </List.Item>

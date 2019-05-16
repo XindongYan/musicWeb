@@ -4,6 +4,48 @@ export function query() {
   return request('/api/users');
 };
 
+export function users() {
+  return request('/api/users',{
+    method: 'GET'
+  })
+}
+
+// 查找音乐
+export function searchMusic(params) {
+  return request(`/api/searchMusic?name=${params.name}`, {
+    method: 'GET'
+  })
+}
+
+// 封禁用户
+export function freeze(params) {
+  return request('/api/freeze', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  })
+}
+
+// 查询用户
+export function searchUser(params) {
+  return request(`/api/search/user?username=${params.username}`, {
+    method: 'GET'
+  })
+}
+
+// 获取用户详细信息
+export function taMessage(params) {
+  return request(`/api/taMessage?id=${params.id}`, {
+    method: 'GET'
+  })
+}
+
+// 注销登陆
+export function signOut() {
+  return request('/api/signOut', {
+    method: 'POST'
+  })
+}
+
 // 取消喜欢
 export function removeLike(params) {
   return request('/api/removeLike', {

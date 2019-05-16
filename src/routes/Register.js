@@ -72,8 +72,9 @@ export default class Register extends React.PureComponent {
     if (registerResult.data.code === 200) {
       message.success(registerResult.data.msg);
       console.log(this.props)
-      sessionStorage.setItem('avatar', registerResult.data.user.avatar);
-      sessionStorage.setItem('id', registerResult.data.user.id);
+      console.log(registerResult)
+      localStorage.setItem('avatar', registerResult.data.user.avatar);
+      localStorage.setItem('id', registerResult.data.user.id);
       this.props.dispatch(routerRedux.push('/'));
     } else {
       message.warn(registerResult.data.msg);

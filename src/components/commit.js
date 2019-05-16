@@ -13,7 +13,7 @@ export default class Commit extends React.PureComponent {
   }
 
   async componentDidMount() {
-    let result = await commitList({ id: sessionStorage.getItem('id') });
+    let result = await commitList({ id: localStorage.getItem('id') });
     console.log(result);
     this.setState({
       colums: result.data.result
