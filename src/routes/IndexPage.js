@@ -205,6 +205,7 @@ export default class IndexPage extends React.PureComponent {
           visible={this.state.uploadVisible}
           onCancel={this.handleOk}
           onOk={this.handleSubmit}
+          destroyOnClose={true}
         >
           <Upload
             action='http://127.0.0.1:3000/api/uploadMusic'

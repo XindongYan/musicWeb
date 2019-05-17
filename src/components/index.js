@@ -89,6 +89,12 @@ export default class Index extends React.PureComponent {
         <List
             className="demo-loadmore-list"
             itemLayout="horizontal"
+            pagination={{
+              onChange: page => {
+                console.log(page);
+              },
+              pageSize: 10,
+            }}
             dataSource={data}
             renderItem={item => (
               <List.Item actions={[<a onClick={e => this.play(item)}>播放</a>, <Icon onClick={e => this.like(item)} type="heart" theme={(item.likes.indexOf(localStorage.getItem('id')) !== -1 || like) ? 'twoTone' : theme} twoToneColor={heart} />]}>
